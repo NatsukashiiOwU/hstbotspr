@@ -1,0 +1,36 @@
+version: "2.3"
+services:
+  bot:
+    build:
+      context: ./bot
+    ports:
+      - "8080:8080"
+    networks:
+      - net
+    environment:
+      BASEURL: localhost
+      BOT_USERNAME: hstbotttbot
+      BOT_TOKEN: 6983461627:AAHg_L9-Cvu2FbqO16l-h5am5q5OF_6w-vM
+      OIDC_KEYCLOAK_BASEURL: localhost
+      OIDC_KEYCLOAK_CLIENTSECRET: ca2eeef9-873a-453c-b75e-54d52e7f7486
+      LOGGING_LEVEL_COM_GITHUB_FLIPP5B_TELEGRAMBOTOIDC: DEBUG
+    depends_on:
+      - keycloak
+
+  keycloak:
+    image: jboss/keycloak:8.0.1
+    ports:
+      - "8180:8080"
+    networks:
+      - net
+    environment:
+      KEYCLOAK_USER: kita
+      KEYCLOAK_PASSWORD: 4
+      KEYCLOAK_IMPORT: /tmp/telegram-bot-oidc.json
+    volumes:
+      - ./keycloak/telegram-bot-oidc.json:/tmp/telegram-bot-oidc.json
+
+  # Tor network is used to access Telegram's servers
+
+networks:
+  net:
